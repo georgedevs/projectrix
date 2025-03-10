@@ -14,7 +14,6 @@ export interface PaymentSessionResponse {
   session?: {
     subscriptionId: string;
     clientSecret: string;
-    url: string;
   };
   payment?: {
     paymentLink: string;
@@ -33,19 +32,6 @@ export interface SubscriptionStatusResponse {
   plan: 'free' | 'pro';
   endDate?: string;
   renewalDate?: string;
-}
-
-export interface PaymentHistoryResponse {
-  success: boolean;
-  payments: Array<{
-    _id: string;
-    amount: number;
-    currency: string;
-    date: string;
-    status: 'successful' | 'failed' | 'pending';
-    provider: 'stripe' | 'flutterwave';
-    reference: string;
-  }>;
 }
 
 export const paymentApiSlice = apiSlice.injectEndpoints({
@@ -86,7 +72,7 @@ export const paymentApiSlice = apiSlice.injectEndpoints({
         url: '/subscription',
         method: 'GET',
       }),
-      providesTags: ['User', 'Subscription'],
+      providesTags: ['User'],
     }),
     
     // Cancel subscription
@@ -95,16 +81,7 @@ export const paymentApiSlice = apiSlice.injectEndpoints({
         url: '/cancel',
         method: 'POST',
       }),
-      invalidatesTags: ['User', 'Subscription'],
-    }),
-    
-    // Get payment history
-    getPaymentHistory: builder.query<PaymentHistoryResponse, void>({
-      query: () => ({
-        url: '/payment-history',
-        method: 'GET',
-      }),
-      providesTags: ['PaymentHistory'],
+      invalidatesTags: ['User'],
     }),
   }),
 });
@@ -115,5 +92,4 @@ export const {
   useVerifyPaymentMutation,
   useGetSubscriptionStatusQuery,
   useCancelSubscriptionMutation,
-  useGetPaymentHistoryQuery,
 } = paymentApiSlice;
